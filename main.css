@@ -1,0 +1,41 @@
+body {
+    font-size: 14;
+    font-family: consolas;
+}
+.label {
+    float: left;
+    width: 150px;
+}
+.textbox {
+    float: left;
+    width: 550px;
+}
+.textbox input {
+    width: 500px;
+}
+textarea {
+    resize: none;
+}
+.buttons {
+    float: left;
+}
+.linkPanel {
+
+}
+.groupPanel {
+    clear: both;
+    float: left;
+    padding: 20px;
+    border: 3px solid white;
+    background-color: #EEEEEE;
+}
+.endButtons {
+    clear: both;
+    padding: 20px;
+}
+.result {
+    clear: both;
+    padding: 20px;
+    border: 3px solid white;
+    background-color: #EEEEEE;
+}
