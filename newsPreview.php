@@ -1,6 +1,6 @@
 <?php
 
-    require_once 'link.php';
+    require 'link.php';
     require 'stringBuffer.php';
 
     class NewsPreview {

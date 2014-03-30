@@ -1,9 +1,6 @@
 <?php
 
-    /*require '../html_builder/scriptHtml.php';
-    $thing = new ScriptHtml();
-    $thing->br();
-    $thing->render();*/
+    require '../html_builder/scriptHtml.php';
 
     class StringBuffer {
         private $buffer;
