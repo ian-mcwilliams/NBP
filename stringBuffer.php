@@ -1,6 +1,13 @@
 <?php
-
-    require '../html_builder/scriptHtml.php';
+    function getHtmlBuilderLocation() {
+        $docRoot = $_ENV['DOCUMENT_ROOT'] ?: '';
+        if (strpos($docRoot, 'public_html')) {
+            return '../html_builder/scriptHtml.php';
+        } else {
+            return '';
+        }
+    }
+    require getHtmlBuilderLocation();
 
     class StringBuffer {
         private $buffer;
