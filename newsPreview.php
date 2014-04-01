@@ -71,7 +71,9 @@
         }
         
         private function removeFromLinkObjs() {
-            array_splice($this->getLinkObjs(), substr($this->getSubmit(), -1), 1);
+            $linkObjs = $this->getLinkObjs();
+            array_splice($linkObjs, substr($this->getSubmit(), -1), 1);
+            $this->setLinkObjs($linkObjs);
             $this->decrLinkCount();
         }
         

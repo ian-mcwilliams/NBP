@@ -42,29 +42,54 @@
         }
 
         public function addLink($linkno, $href, $text) {
-            $str = '
-            <div class="groupPanel">
-                <div class="inputPanel">
-                    <div class="label">Text:</div>
-                    <div class="textbox">
-                        <textarea name="linktext'.$linkno.'" rows=3 cols=68>'.$text.'</textarea>
-                    </div>
-                </div>
-                <div class="inputPanel">
-                    <div class="label">Href:</div>
-                    <div class="textbox">
-                        <input type="text" name="href'.$linkno.'" value="'.$href.'" style="width:500px" />
-                    </div>
-                </div>
-                <div class="buttons">
-                    <input type="submit" name="submit" value="remove link '.$linkno.'" />
-                    <input type="submit" name="submit" value="move up '.$linkno.'" />
-                    <input type="submit" name="submit" value="move down '.$linkno.'" />
-                </div>
-            </div>'."\n";
-            $this->addToBuffer($str);
+            $sH = new ScriptHtml();
+            
+            $linkPanelDiv = $sH->createElement('div', array('class'=>'groupPanel'));
+            
+            $textDiv = $sH->createElement('div', array('class'=>'inputPanel'));
+            
+            $textLabelDiv = $sH->createElement('div', array('class'=>'label'));
+            $textLabel = $sH->createElement('text', array('Text:'));
+            $textLabelDiv->addChildren($textLabel);
+            $textDiv->addChildren($textLabelDiv);
+            
+            $textText = $sH->createElement('text', $text);
+            $textTextarea = $sH->createElement('textarea', array('name'=>'linktext'.$linkno, 'rows'=>3, 'cols'=>68));
+            $textTextarea->addChildren($textText);
+            $textTextboxDiv = $sH->createElement('div', array('class'=>'textbox'));
+            $textTextboxDiv->addChildren($textTextarea);
+            $textDiv->addChildren($textTextboxDiv);
+            
+            $linkPanelDiv->addChildren($textDiv);
+            
+            $hrefDiv = $sH->createElement('div', array('class'=>'inputPanel'));
+            
+            $hrefLabelDiv = $sH->createElement('div', array('class'=>'label'));
+            $hrefLabel = $sH->createElement('text', array('Href:'));
+            $hrefLabelDiv->addChildren($hrefLabel);
+            $hrefDiv->addChildren($hrefLabelDiv);
+            
+            $hrefTextboxDiv = $sH->createElement('div', array('class'=>'textbox'));
+            $hrefInput = $sH->createElement('inputText', array('name'=>'href'.$linkno, 'value'=>$href, 'style'=>'width:500px'));
+            $hrefTextboxDiv->addChildren($hrefInput);
+            $hrefDiv->addChildren($hrefTextboxDiv);
+            
+            $linkPanelDiv->addChildren($hrefDiv);
+            
+            $linkActionsDiv = $sH->createElement('div', array('class'=>'buttons'));
+            
+            $removeLinkInput = $sH->createElement('inputSubmit', array('name'=>'submit', 'value'=>'remove link '.$linkno));
+            $moveUpInput = $sH->createElement('inputSubmit', array('name'=>'submit', 'value'=>'move up '.$linkno));
+            $moveDownInput = $sH->createElement('inputSubmit', array('name'=>'submit', 'value'=>'move down '.$linkno));
+            $linkActionsDiv->addChildren(array($removeLinkInput, $moveUpInput, $moveDownInput));
+            
+            $linkPanelDiv->addChildren($linkActionsDiv);
+            
+            $sH->addChildren($linkPanelDiv);
+            
+            $this->addToBuffer($sH->render());
         }
-        
+
         public function addImages($imgText, $img1, $img2, $linkCount) {
             $str = '
                     <div class="groupPanel">
