@@ -10,9 +10,11 @@
 
     class StringBuffer {
         private $buffer;
+        private $sH;
 
         public function StringBuffer() {
             $this->buffer = '';
+            $this->sH = new ScriptHtml();
         }
 
         public function getBuffer() {
@@ -23,134 +25,190 @@
             $this->buffer .= $str;
         }
         
+        public function addForm($mainText, $linkObjs, $imgText, $img1, $img2, $linkCount) {
+            $sH = new ScriptHtml();
+            $mainTextHtml = $this->addHeader($mainText);
+            $linkNo = 0;
+            $linkHtmlArr = array();
+            foreach($linkObjs as $linkObj) {
+                $linkHtmlArr[] = $this->addLink($linkNo, $linkObj->getHref(), $linkObj->getText());
+                $linkNo++;
+            }
+            $imagesHtml = $this->addImages($imgText, $img1, $img2, $linkCount);
+            
+            $formChildren = array_merge(
+                array($mainTextHtml),
+                $linkHtmlArr,
+                $imagesHtml
+            );
+            $formDiv = $sH->create('div', array('class'=>'formPanel'), $formChildren);
+            $form = $sH->create('form', array('name'=>'linkform', 'action'=>'index.php', 'method'=>'post'), $formDiv);
+            return $form;
+        }
+        
+        public function addHtml($mainText, $linkObjs, $imgText, $img1, $img2, $linkCount) {
+            $sH = new ScriptHtml();
+            $formHtml = $this->addForm($mainText, $linkObjs, $imgText, $img1, $img2, $linkCount);
+            $outputHtml = $this->addOutput($mainText, $linkObjs, $imgText, $img1, $img2);
+            
+            $bodyChildren = array_merge(array($formHtml), $outputHtml);
+            
+            $cssLink = $sH->create('link', array('href'=>'main.css'));
+            $head = $sH->create('head', array(), $cssLink);
+            $body = $sH->create('body', array(), $bodyChildren);
+            $html = $sH->create('html', array(), array($head, $body));
+            $sH->add($html);
+            $this->addToBuffer($sH->render());
+        }
+        
         public function addHeader($mainText) {
-            $str = '
-                <html><head>
-                <link rel="stylesheet" type="text/css" href="main.css" />
-                </head>
-                <body>
-
-                <form name="linkform" action="index.php" method="post">
-                    <div class="formPanel">
-                        <div class="groupPanel">
-                            <div class="label">Main text:</div>
-                            <div class="textbox">
-                                <textarea name="maintext" rows=20 cols=68>'.$mainText.'</textarea>
-                            </div>
-                        </div>'."\n";
-            $this->addToBuffer($str);
+            $sH = new scriptHtml();
+            
+            //textDiv
+            //labelDiv
+            $label = $sH->create('text', 'Main Text:');
+            $labelDiv = $sH->create('div', array('class'=>'label'), $label);
+            
+            //textareaDiv
+            $text = $sH->create('text', $mainText);
+            $textarea = $sH->create('textarea', array('name'=>'maintext', 'rows'=>20, 'cols'=>68), $text);
+            $textareaDiv = $sH->create('div', array('class'=>'textbox'), $textarea);
+            
+            $textDiv = $sH->create('div', array('class'=>'groupPanel'), array($labelDiv, $textareaDiv));
+            
+            return $textDiv;
         }
 
         public function addLink($linkno, $href, $text) {
             $sH = new ScriptHtml();
             
-            $linkPanelDiv = $sH->createElement('div', array('class'=>'groupPanel'));
+            //textDiv
+            $textLabel = $sH->create('text', array('Text:'));
+            $textLabelDiv = $sH->create('div', array('class'=>'label'), $textLabel);
             
-            $textDiv = $sH->createElement('div', array('class'=>'inputPanel'));
+            $textText = $sH->create('text', $text);
+            $textTextarea = $sH->create('textarea', array('name'=>'linktext'.$linkno, 'rows'=>3, 'cols'=>68), $textText);
+            $textTextboxDiv = $sH->create('div', array('class'=>'textbox'), $textTextarea);
             
-            $textLabelDiv = $sH->createElement('div', array('class'=>'label'));
-            $textLabel = $sH->createElement('text', array('Text:'));
-            $textLabelDiv->addChildren($textLabel);
-            $textDiv->addChildren($textLabelDiv);
+            $textDiv = $sH->create('div', array('class'=>'inputPanel'), array($textLabelDiv, $textTextboxDiv));
             
-            $textText = $sH->createElement('text', $text);
-            $textTextarea = $sH->createElement('textarea', array('name'=>'linktext'.$linkno, 'rows'=>3, 'cols'=>68));
-            $textTextarea->addChildren($textText);
-            $textTextboxDiv = $sH->createElement('div', array('class'=>'textbox'));
-            $textTextboxDiv->addChildren($textTextarea);
-            $textDiv->addChildren($textTextboxDiv);
+            //hrefDiv
+            $hrefLabel = $sH->create('text', array('Href:'));
+            $hrefLabelDiv = $sH->create('div', array('class'=>'label'), $hrefLabel);
             
-            $linkPanelDiv->addChildren($textDiv);
+            $hrefInput = $sH->create('inputText', array('name'=>'href'.$linkno, 'value'=>$href, 'style'=>'width:500px'));
+            $hrefTextboxDiv = $sH->create('div', array('class'=>'textbox'), $hrefInput);
             
-            $hrefDiv = $sH->createElement('div', array('class'=>'inputPanel'));
+            $hrefDiv = $sH->create('div', array('class'=>'inputPanel'), array($hrefLabelDiv, $hrefTextboxDiv));
             
-            $hrefLabelDiv = $sH->createElement('div', array('class'=>'label'));
-            $hrefLabel = $sH->createElement('text', array('Href:'));
-            $hrefLabelDiv->addChildren($hrefLabel);
-            $hrefDiv->addChildren($hrefLabelDiv);
+            //linkActionsDiv            
+            $removeLinkInput = $sH->create('inputSubmit', array('name'=>'submit', 'value'=>'remove link '.$linkno));
+            $moveUpInput = $sH->create('inputSubmit', array('name'=>'submit', 'value'=>'move up '.$linkno));
+            $moveDownInput = $sH->create('inputSubmit', array('name'=>'submit', 'value'=>'move down '.$linkno));
             
-            $hrefTextboxDiv = $sH->createElement('div', array('class'=>'textbox'));
-            $hrefInput = $sH->createElement('inputText', array('name'=>'href'.$linkno, 'value'=>$href, 'style'=>'width:500px'));
-            $hrefTextboxDiv->addChildren($hrefInput);
-            $hrefDiv->addChildren($hrefTextboxDiv);
+            $linkActionsDiv = $sH->create('div', array('class'=>'buttons'), array($removeLinkInput, $moveUpInput, $moveDownInput));
             
-            $linkPanelDiv->addChildren($hrefDiv);
+            //linkPanelDiv
+            $linkPanelDiv = $sH->create('div', array('class'=>'groupPanel'), array($textDiv, $hrefDiv, $linkActionsDiv));
             
-            $linkActionsDiv = $sH->createElement('div', array('class'=>'buttons'));
-            
-            $removeLinkInput = $sH->createElement('inputSubmit', array('name'=>'submit', 'value'=>'remove link '.$linkno));
-            $moveUpInput = $sH->createElement('inputSubmit', array('name'=>'submit', 'value'=>'move up '.$linkno));
-            $moveDownInput = $sH->createElement('inputSubmit', array('name'=>'submit', 'value'=>'move down '.$linkno));
-            $linkActionsDiv->addChildren(array($removeLinkInput, $moveUpInput, $moveDownInput));
-            
-            $linkPanelDiv->addChildren($linkActionsDiv);
-            
-            $sH->addChildren($linkPanelDiv);
-            
-            $this->addToBuffer($sH->render());
+            return $linkPanelDiv;
         }
 
         public function addImages($imgText, $img1, $img2, $linkCount) {
-            $str = '
-                    <div class="groupPanel">
-                        <div class="label">Text:</div>
-                        <div class="textbox">
-                            <input type="text" name="kickoffText" value="'.htmlentities($imgText).'" />
-                        </div>
-                    </div>
-                    <div class="groupPanel">
-                        <div class="label">Image 1:</div>
-                        <div class="textbox">
-                            <input type="text" name="kickoffFormImg" value="'.$img1.'" />
-                        </div>
-                    </div>
-                    <div class="groupPanel">
-                        <div class="label">Image 2:</div>
-                        <div class="textbox">
-                            <input type="text" name="kickoffOddsImg" value="'.$img2.'" />
-                        </div>
-                    </div>
-                    <div class="endButtons">
-                        <input name="linkcount" type="hidden" value ="'.$linkCount.'" />
-                        <input name="displayResult" type="hidden" value="y" />
-                        <input type="submit" name="submit" value="submit" />
-                        &nbsp;&nbsp;
-                        <input type="submit" name="submit" value="add link(s)" />
-                        click to add one, or specify: 
-                        <input type="text" name="linksToAdd" style="width:20px" />
-                    </div>
-                </div>
-            </form>'."\n";
-            $this->addToBuffer($str);
+            $sH = new ScriptHtml();
+            
+            $textLabel = $sH->create('text', 'Text:');
+            $textLabelDiv = $sH->create('div', array('class'=>'label'), $textLabel);
+            $textInput = $sH->create('inputText', array('name'=>'kickoffText', 'value'=>htmlentities($imgText)));
+            $textInputDiv = $sH->create('div', array('class'=>'textbox'), $textInput);
+            $textDiv = $sH->create('div', array('class'=>'groupPanel'), array($textLabelDiv, $textInputDiv));
+            
+            $image1Label = $sH->create('text', 'Image 1:');
+            $image1LabelDiv = $sH->create('div', array('class'=>'label'), $image1Label);
+            $image1Input = $sH->create('inputText', array('name'=>'kickoffFormImg', 'value'=>htmlentities($img1)));
+            $image1InputDiv = $sH->create('div', array('class'=>'textbox'), $image1Input);
+            $image1Div = $sH->create('div', array('class'=>'groupPanel'), array($image1LabelDiv, $image1InputDiv));
+            
+            $image2Label = $sH->create('text', 'Image 2:');
+            $image2LabelDiv = $sH->create('div', array('class'=>'label'), $image2Label);
+            $image2Input = $sH->create('inputText', array('name'=>'kickoffOddsImg', 'value'=>htmlentities($img2)));
+            $image2InputDiv = $sH->create('div', array('class'=>'textbox'), $image2Input);
+            $image2Div = $sH->create('div', array('class'=>'groupPanel'), array($image2LabelDiv, $image2InputDiv));
+            
+            $linkcountInput = $sH->create('inputHidden', array('name'=>'linkcount', 'value'=>$linkCount));
+            $displayInput = $sH->create('inputHidden', array('name'=>'displayResult', 'value'=>'y'));
+            $submitInput = $sH->create('inputSubmit', array('name'=>'submit', 'value'=>'submit'));
+            $nbsp = $sH->create('text', '&nbsp;');
+            $addLinksInput = $sH->create('inputSubmit', array('name'=>'submit', 'value'=>'add link(s)'));
+            $addLinksLabel = $sH->create('text', 'click to add one, or specify:');
+            $specifyLinksInput = $sH->create('inputText', array('name'=>'linksToAdd', 'style'=>'width:20px'));
+            $buttonsDiv = $sH->create('div', array('class'=>'endButtons'), array(
+                $linkcountInput,
+                $displayInput,
+                $submitInput,
+                $nbsp,
+                $nbsp,
+                $addLinksInput,
+                $addLinksLabel,
+                $specifyLinksInput
+                    ));
+            
+            return array($textDiv, $image1Div, $image2Div, $buttonsDiv);
         }
         
         public function addOutput($mainText, $linkObjs, $imgText, $img1, $img2) {
-            $str = '
-            <br />Result:<br /><br />
-            <div class="result">
-            <textarea rows=50 cols=136>
-            &lt;div style=&quot;padding-left:30px;width:750px;font-family:consolas&quot;&gt;
-            '.$mainText."\n\n\n";
-            $this->addToBuffer($str);
-
+            $sH = new ScriptHtml();
+//            
+            $br = $sH->getBr();
+            $resultHeader = $sH->create('text', 'Result:');
+            
+            $mainTextHtml = $sH->create('text', '&lt;div style=&quot;padding-left:30px;'
+                    .'width:750px;font-family:consolas&quot;&gt;'
+                    .$mainText."\n\n\n");
+            
+            
+            $linkHtmlArr = array();
             foreach ($linkObjs as $linkObj) {
-                $str = '&lt;div style=&quot;padding:10px;background-color:#EEEEEE;border:1px solid white;width:550px;word-wrap:break-word&quot;&gt;&lt;a style=&quot;display:block;text-decoration:none;color:#FF0000&quot; href=&quot;'.$linkObj->getHref().'&quot;&gt;'.$linkObj->getText().':&lt;br /&gt;&lt;br /&gt;'.$linkObj->getHref().'&lt;/a&gt;&lt;/div&gt;'."\n\n";
-                $this->addToBuffer($str);
+                $linkHtmlTxt1 = '&lt;div style=&quot;padding:10px;background-color:#EEEEEE;'
+                        . 'border:1px solid white;width:550px;word-wrap:break-word'
+                        . '&quot;&gt;&lt;a style=&quot;display:block;text-decoration:none;'
+                        . 'color:#FF0000&quot; href=&quot;';
+                $linkHtmlTxt2 = '&quot;&gt;';
+                $linkHtmlTxt3 = ':&lt;br /&gt;&lt;br /&gt;';
+                $linkHtmlTxt4 = '&lt;/a&gt;&lt;/div&gt;'."\n\n";
+                $sHLinkHtml = $sH->create('text', array(
+                    $linkHtmlTxt1,
+                    $linkObj->getHref(),
+                    $linkHtmlTxt2,
+                    $linkObj->getText(),
+                    $linkHtmlTxt3,
+                    $linkObj->getHref(),
+                    $linkHtmlTxt4
+                        ));
+                //array_push($linkHtmlArr, $sHLinkHtml);
+                $linkHtmlArr[] = $sHLinkHtml;
 
             }
-
-            $str = $imgText."\n\n".'&lt;img src=&quot;'.$img1.'&quot;&nbsp;/&gt;'."\n\n".'&lt;img src=&quot;'.$img2.'&quot;&nbsp;/&gt'."\n\n".'&lt;/div&gt;
-            </textarea>
-            </div>'."\n";
-
-            $this->addToBuffer($str);
-        }
-        
-        public function addFooter() {
-            $str = '
-    </body>
-</html>';
-            $this->addToBuffer($str);
+            
+            $imgHtmlTxt1 = "\n\n".'&lt;img src=&quot;';
+            $imgHtmlTxt2 = '&quot;&nbsp;/&gt;'."\n\n".'&lt;img src=&quot;';
+            $imgHtmlTxt3 = '&quot;&nbsp;/&gt'."\n\n".'&lt;/div&gt;';
+            $resultTextareaArr = array_merge(
+                array($mainTextHtml),
+                $linkHtmlArr,
+                array($imgText, $imgHtmlTxt1, $img1, $imgHtmlTxt2, $img2, $imgHtmlTxt3)
+            );
+            $resultTextarea = $sH->create('textarea', array('rows'=>50, 'cols'=>136), $resultTextareaArr);
+            
+            $resultDiv = $sH->create('div', array('class'=>'result'), $resultTextarea);
+            
+            return array(
+                $br,
+                $resultHeader,
+                $br,
+                $br,
+                $resultDiv
+            );
         }
         
         

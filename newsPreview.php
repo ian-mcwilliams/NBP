@@ -28,13 +28,7 @@
             $this->checkAddLinks();
             $this->buildLinkObjs();
             $this->checkMoveLinkObjs();
-            $this->addHeaderToBuffer();
-            $this->addLinksToBuffer();
-            $this->addImagesToBuffer();
-            if ($this->getDisplayResult() == 'y') {
-                $this->addOutputToBuffer();
-            }
-            $this->addFooterToBuffer();
+            $this->buffer->addHtml($this->getMainText(), $this->getLinkObjs(), $this->getImgText(), $this->getImg1(), $this->getImg2(), $this->getLinkCount());
         }
         
         private function checkAddLinks() {
@@ -135,35 +129,6 @@
         
         public function addToBuffer($str) {
             $this->buffer->addToBuffer($str);
-        }
-        
-        private function addHeaderToBuffer() {
-            $this->buffer->addHeader($this->getMainText());
-        }
-        
-        private function addLinksToBuffer() {
-            $linkNo = 0;
-            foreach($this->getLinkObjs() as $linkObj) {
-                $this->buffer->addLink($linkNo, $linkObj->getHref(), $linkObj->getText());
-                $linkNo++;
-            }
-        }       
-        
-        private function addImagesToBuffer() {
-            $this->buffer->addImages($this->getImgText(), $this->getImg1(), $this->getImg2(), $this->getLinkCount());
-        }
-        
-        private function addOutputToBuffer() {
-            $mainText = $this->getMainText();
-            $linkObjs = $this->getLinkObjs();
-            $imgText = $this->getImgText();
-            $img1 = $this->getImg1();
-            $img2 = $this->getImg2();
-            $this->buffer->addOutput($mainText, $linkObjs, $imgText, $img1, $img2);
-        }
-        
-        private function addFooterToBuffer() {
-            $this->buffer->addFooter();
         }
 
         public function getLinkCount() {
