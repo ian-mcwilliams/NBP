@@ -1,12 +1,4 @@
 <?php
-    function getHtmlBuilderLocation() {
-        if (isset($_ENV['DOCUMENT_ROOT'])) {
-            return 'html_builder/scriptHtml.php';
-        } else {
-            return '../html_builder/scriptHtml.php';
-        }
-    }
-    require getHtmlBuilderLocation();
 
     class StringBuffer {
         private $buffer;
@@ -15,6 +7,15 @@
         public function StringBuffer() {
             $this->buffer = '';
             $this->sH = new ScriptHtml();
+            require $this->getHtmlBuilderLocation();
+        }
+        
+        private function getHtmlBuilderLocation() {
+            if (isset($_ENV['DOCUMENT_ROOT'])) {
+                return '../html_builder/scriptHtml.php';
+            } else {
+                return '../html_builder/scriptHtml.php';
+            }
         }
 
         public function getBuffer() {
