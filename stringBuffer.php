@@ -6,8 +6,8 @@
 
         public function StringBuffer() {
             $this->buffer = '';
-            $this->sH = new ScriptHtml();
             require $this->getHtmlBuilderLocation();
+            $this->sH = new ScriptHtml();
         }
         
         private function getHtmlBuilderLocation() {
