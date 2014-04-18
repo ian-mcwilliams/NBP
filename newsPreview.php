@@ -28,7 +28,7 @@
             $this->checkAddLinks();
             $this->buildLinkObjs();
             $this->checkMoveLinkObjs();
-            $this->buffer->addHtml($this->getMainText(), $this->getLinkObjs(), $this->getImgText(), $this->getImg1(), $this->getImg2(), $this->getLinkCount());
+            $this->buffer->genHtml($this->getMainText(), $this->getLinkObjs(), $this->getImgText(), $this->getImg1(), $this->getImg2(), $this->getLinkCount());
         }
         
         private function checkAddLinks() {
