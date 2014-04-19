@@ -27,7 +27,7 @@
         }
         
         public function genHtml($mainText, $linkObjs, $imgText, $img1, $img2, $uploadImg, $linkCount) {
-            $html = $this->hP->create('html', NULL, array(
+            $html = $this->hP->gE('html', NULL, array(
                 $this->genHead('main.css'),
                 $this->genBody($mainText, $linkObjs, $imgText, $img1, $img2, $uploadImg, $linkCount)
             ));
@@ -36,8 +36,8 @@
         }
         
         private function genHead($cssHref) {
-            $cssLink = $this->hP->create('link', "href=>$cssHref");
-            return $this->hP->create('head', NULL, $cssLink);
+            $cssLink = $this->hP->gE('link', "href=>$cssHref");
+            return $this->hP->gE('head', NULL, $cssLink);
         }
         
         private function genBody($mainText, $linkObjs, $imgText, $img1, $img2, $uploadImg, $linkCount) {
@@ -46,7 +46,7 @@
             
             $bodyChildren = array_merge(array($formHtml), $outputHtml);
             
-            return $this->hP->create('body', NULL, $bodyChildren);
+            return $this->hP->gE('body', NULL, $bodyChildren);
         }
         
         private function genForm($mainText, $linkObjs, $imgText, $img1, $img2, $linkCount) {
@@ -55,8 +55,8 @@
                 $this->genLinkHtmlArr($linkObjs),
                 $this->genImages($imgText, $img1, $img2, $linkCount)
             );
-            $formDiv = $this->hP->create('div', 'class=>formPanel', $formChildren);
-            return $this->hP->create('form', 'name=>linkform&&action=>index.php'
+            $formDiv = $this->hP->gE('div', 'class=>formPanel', $formChildren);
+            return $this->hP->gE('form', 'name=>linkform&&action=>index.php'
                     . '&&method=>post&&enctype=>multipart/form-data',
                 $formDiv);
         }
@@ -72,17 +72,17 @@
         }
         
         private function genMainTextDiv($mainText) {
-            $label = $this->hP->create('text', 'Main Text:');
-            $labelDiv = $this->hP->create('div', 'class=>label', $label);
-            $text = $this->hP->create('text', $mainText);
-            $textarea = $this->hP->create('textarea', 'name=>maintext&&rows=>20&&cols=>68', $text);
-            $textareaDiv = $this->hP->create('div', 'class=>textbox', $textarea);
-            $textDiv = $this->hP->create('div', 'class=>groupPanel', array($labelDiv, $textareaDiv));
+            $label = $this->hP->gE('text', 'Main Text:');
+            $labelDiv = $this->hP->gE('div', 'class=>label', $label);
+            $text = $this->hP->gE('text', $mainText);
+            $textarea = $this->hP->gE('textarea', 'name=>maintext&&rows=>20&&cols=>68', $text);
+            $textareaDiv = $this->hP->gE('div', 'class=>textbox', $textarea);
+            $textDiv = $this->hP->gE('div', 'class=>groupPanel', array($labelDiv, $textareaDiv));
             return array($textDiv);
         }
 
         private function genLink($linkno, $href, $text) {
-            return $this->hP->create('div', 'class=>groupPanel', array(
+            return $this->hP->gE('div', 'class=>groupPanel', array(
                 $this->genLinkTextDiv($linkno, $text),
                 $this->genLinkHrefDiv($linkno, $href),
                 $this->genLinkActionsDiv($linkno)
@@ -90,27 +90,27 @@
         }
         
         private function genLinkTextDiv($linkno, $text) {
-            $textLabel = $this->hP->create('text', 'Text:');
-            $textLabelDiv = $this->hP->create('div', 'class=>label', $textLabel);
-            $textText = $this->hP->create('text', $text);
-            $textTextarea = $this->hP->create('textarea', "name=>linktext$linkno&&rows=>3&&cols=>68", $textText);
-            $textTextboxDiv = $this->hP->create('div', 'class=>textbox', $textTextarea);
-            return $this->hP->create('div', 'class=>inputPanel', array($textLabelDiv, $textTextboxDiv));
+            $textLabel = $this->hP->gE('text', 'Text:');
+            $textLabelDiv = $this->hP->gE('div', 'class=>label', $textLabel);
+            $textText = $this->hP->gE('text', $text);
+            $textTextarea = $this->hP->gE('textarea', "name=>linktext$linkno&&rows=>3&&cols=>68", $textText);
+            $textTextboxDiv = $this->hP->gE('div', 'class=>textbox', $textTextarea);
+            return $this->hP->gE('div', 'class=>inputPanel', array($textLabelDiv, $textTextboxDiv));
         }
         
         private function genLinkHrefDiv($linkno, $href) {
-            $hrefLabel = $this->hP->create('text', 'Href:');
-            $hrefLabelDiv = $this->hP->create('div', 'class=>label', $hrefLabel);
-            $hrefInput = $this->hP->create('inputText', "name=>href$linkno&&value=>$href&&style=>width:500px");
-            $hrefTextboxDiv = $this->hP->create('div', 'class=>textbox', $hrefInput);
-            return $this->hP->create('div', 'class=>inputPanel', array($hrefLabelDiv, $hrefTextboxDiv));
+            $hrefLabel = $this->hP->gE('text', 'Href:');
+            $hrefLabelDiv = $this->hP->gE('div', 'class=>label', $hrefLabel);
+            $hrefInput = $this->hP->gE('inputText', "name=>href$linkno&&value=>$href&&style=>width:500px");
+            $hrefTextboxDiv = $this->hP->gE('div', 'class=>textbox', $hrefInput);
+            return $this->hP->gE('div', 'class=>inputPanel', array($hrefLabelDiv, $hrefTextboxDiv));
         }
         
         private function genLinkActionsDiv($linkno) {
-            $removeLinkInput = $this->hP->create('inputSubmit', "name=>submit&&value=>remove link $linkno");
-            $moveUpInput = $this->hP->create('inputSubmit', "name=>submit&&value=>move up $linkno");
-            $moveDownInput = $this->hP->create('inputSubmit', "name=>submit&&value=>move down $linkno");
-            return $this->hP->create('div', 'class=>buttons', array($removeLinkInput, $moveUpInput, $moveDownInput));
+            $removeLinkInput = $this->hP->gE('inputSubmit', "name=>submit&&value=>remove link $linkno");
+            $moveUpInput = $this->hP->gE('inputSubmit', "name=>submit&&value=>move up $linkno");
+            $moveDownInput = $this->hP->gE('inputSubmit', "name=>submit&&value=>move down $linkno");
+            return $this->hP->gE('div', 'class=>buttons', array($removeLinkInput, $moveUpInput, $moveDownInput));
         }
 
         private function genImages($imgText, $img1, $img2, $linkCount) {
@@ -123,47 +123,47 @@
         }
         
         private function genImageTextDiv($imgText) {
-            $textLabel = $this->hP->create('text', 'Text:');
-            $textLabelDiv = $this->hP->create('div', 'class=>label', $textLabel);
-            $textInput = $this->hP->create('inputText', 'name=>imgText&&value=>'.htmlentities($imgText));
-            $textInputDiv = $this->hP->create('div', 'class=>textbox', $textInput);
-            return $this->hP->create('div', 'class=>groupPanel', array($textLabelDiv, $textInputDiv));
+            $textLabel = $this->hP->gE('text', 'Text:');
+            $textLabelDiv = $this->hP->gE('div', 'class=>label', $textLabel);
+            $textInput = $this->hP->gE('inputText', 'name=>imgText&&value=>'.htmlentities($imgText));
+            $textInputDiv = $this->hP->gE('div', 'class=>textbox', $textInput);
+            return $this->hP->gE('div', 'class=>groupPanel', array($textLabelDiv, $textInputDiv));
         }
         
         private function genImage1Div($img1) {
-            $image1Label = $this->hP->create('text', 'Image 1:');
-            $image1LabelDiv = $this->hP->create('div', 'class=>label', $image1Label);
-            $image1Input = $this->hP->create('inputText', 'name=>img1&&value=>'.htmlentities($img1));
-            $image1InputDiv = $this->hP->create('div', 'class=>textbox', $image1Input);
-            return $this->hP->create('div', 'class=>groupPanel', array($image1LabelDiv, $image1InputDiv));
+            $image1Label = $this->hP->gE('text', 'Image 1:');
+            $image1LabelDiv = $this->hP->gE('div', 'class=>label', $image1Label);
+            $image1Input = $this->hP->gE('inputText', 'name=>img1&&value=>'.htmlentities($img1));
+            $image1InputDiv = $this->hP->gE('div', 'class=>textbox', $image1Input);
+            return $this->hP->gE('div', 'class=>groupPanel', array($image1LabelDiv, $image1InputDiv));
         }
         
         private function genImage2Div($img2) {
-            $image2Label = $this->hP->create('text', 'Image 2:');
-            $image2LabelDiv = $this->hP->create('div', 'class=>label', $image2Label);
-            $image2Input = $this->hP->create('inputText', 'name=>img2&&value=>'.htmlentities($img2));
-            $image2InputDiv = $this->hP->create('div', 'class=>textbox', $image2Input);
-            return $this->hP->create('div', 'class=>groupPanel', array($image2LabelDiv, $image2InputDiv));
+            $image2Label = $this->hP->gE('text', 'Image 2:');
+            $image2LabelDiv = $this->hP->gE('div', 'class=>label', $image2Label);
+            $image2Input = $this->hP->gE('inputText', 'name=>img2&&value=>'.htmlentities($img2));
+            $image2InputDiv = $this->hP->gE('div', 'class=>textbox', $image2Input);
+            return $this->hP->gE('div', 'class=>groupPanel', array($image2LabelDiv, $image2InputDiv));
         }
         
         private function genUploadImageDiv($uploadImg) {
-            $uploadImageLabel = $this->hP->create('text', 'Upload Image:');
-            $uploadImageLabelDiv = $this->hP->create('div', 'class=>label', $uploadImageLabel);
-            $uploadImageInput = $this->hP->create('inputText', 'name=>uploadImg&&value=>'.htmlentities($uploadImg));
-            $uploadImageInputDiv = $this->hP->create('div', 'class=>textbox', $uploadImageInput);
-            return $this->hP->create('div', 'class=>groupPanel', array($uploadImageLabelDiv, $uploadImageInputDiv));
+            $uploadImageLabel = $this->hP->gE('text', 'Upload Image:');
+            $uploadImageLabelDiv = $this->hP->gE('div', 'class=>label', $uploadImageLabel);
+            $uploadImageInput = $this->hP->gE('inputText', 'name=>uploadImg&&value=>'.htmlentities($uploadImg));
+            $uploadImageInputDiv = $this->hP->gE('div', 'class=>textbox', $uploadImageInput);
+            return $this->hP->gE('div', 'class=>groupPanel', array($uploadImageLabelDiv, $uploadImageInputDiv));
             
         }
         
         private function genButtonsDiv($linkCount) {
-            $linkcountInput = $this->hP->create('inputHidden', "name=>linkcount&&value=>$linkCount");
-            $displayInput = $this->hP->create('inputHidden', 'name=>displayResult&&value=>y');
-            $submitInput = $this->hP->create('inputSubmit', 'name=>submit&&value=>submit');
-            $nbsp = $this->hP->create('text', '&nbsp;');
-            $addLinksInput = $this->hP->create('inputSubmit', 'name=>submit&&value=>add link(s)');
-            $addLinksLabel = $this->hP->create('text', 'click to add one, or specify:');
-            $specifyLinksInput = $this->hP->create('inputText', 'name=>linksToAdd&&style=>width:20px');
-            return $this->hP->create('div', 'class=>endButtons', array(
+            $linkcountInput = $this->hP->gE('inputHidden', "name=>linkcount&&value=>$linkCount");
+            $displayInput = $this->hP->gE('inputHidden', 'name=>displayResult&&value=>y');
+            $submitInput = $this->hP->gE('inputSubmit', 'name=>submit&&value=>submit');
+            $nbsp = $this->hP->gE('text', '&nbsp;');
+            $addLinksInput = $this->hP->gE('inputSubmit', 'name=>submit&&value=>add link(s)');
+            $addLinksLabel = $this->hP->gE('text', 'click to add one, or specify:');
+            $specifyLinksInput = $this->hP->gE('inputText', 'name=>linksToAdd&&style=>width:20px');
+            return $this->hP->gE('div', 'class=>endButtons', array(
                 $linkcountInput,
                 $displayInput,
                 $submitInput,
@@ -186,7 +186,7 @@
         }
         
         private function genResultHeader() {
-            return $this->hP->create('text', 'Result:');
+            return $this->hP->gE('text', 'Result:');
         }
         
         private function genResultDiv($mainText, $linkObjs, $imgText, $img1, $img2, $uploadImg) {
@@ -195,13 +195,13 @@
                 $this->genLinkHtmlOutputArr($linkObjs),
                 $this->genImgTextArr($imgText, $img1, $img2, $uploadImg)
             );
-            $resultTextarea = $this->hP->create('textarea', 'rows=>50&&cols=>136', $resultTextareaArr);
+            $resultTextarea = $this->hP->gE('textarea', 'rows=>50&&cols=>136', $resultTextareaArr);
             
-            return $this->hP->create('div', 'class=>result', $resultTextarea);
+            return $this->hP->gE('div', 'class=>result', $resultTextarea);
         }
         
         private function genMainTextHtmlArr($mainText) {
-            return array($this->hP->create('text', htmlentities('<div style="'
+            return array($this->hP->gE('text', htmlentities('<div style="'
                     . 'padding-left:30px;width:750px;font-family:courier">')
                     ."$mainText\n\n\n"));
         }
@@ -210,7 +210,7 @@
             $linkHtmlArr = array();
             foreach ($linkObjs as $linkObj) {
                 $linkHtmlTxtArr = $this->genLinkTextHtmlArr();
-                $sHLinkHtml = $this->hP->create('text', array(
+                $sHLinkHtml = $this->hP->gE('text', array(
                     $linkHtmlTxtArr[0],
                     $linkObj->getHref(),
                     $linkHtmlTxtArr[1],
