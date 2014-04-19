@@ -1,6 +1,7 @@
 <?php
 
     require 'link.php';
+    require 'fileUpload.php';
     require 'stringBuffer.php';
 
     class NewsPreview {
@@ -8,6 +9,7 @@
         private $imgText;
         private $img1;
         private $img2;
+        private $uploadImg;
         private $linkObjs = array();
         private $linkCount;
         private $linkNo = 0;
@@ -15,20 +17,28 @@
         private $displayResult;
         private $submit;
 
-
         public function NewsPreview() {
             $this->buffer = new StringBuffer();
             $this->setLinkCount(filter_input(INPUT_POST, 'linkcount', FILTER_VALIDATE_INT) ?: 1);
             $this->setDisplayResult(filter_input(INPUT_POST, 'displayResult') ?: 'n');
             $this->setMainText(stripslashes(filter_input(INPUT_POST, 'maintext')) ?: '');
-            $this->setImgText(stripslashes(filter_input(INPUT_POST, 'kickoffText')) ?: '');
-            $this->setImg1(stripslashes(filter_input(INPUT_POST, 'kickoffFormImg')) ?: '');
-            $this->setImg2(stripslashes(filter_input(INPUT_POST, 'kickoffOddsImg')) ?: '');
+            $this->setImgText(stripslashes(filter_input(INPUT_POST, 'imgText')) ?: '');
+            $this->setImg1(stripslashes(filter_input(INPUT_POST, 'img1')) ?: '');
+            $this->setImg2(stripslashes(filter_input(INPUT_POST, 'img2')) ?: '');
+            $this->setUploadImg(stripslashes(filter_input(INPUT_POST, 'uploadImg')) ?: '');
             $this->setSubmit(filter_input(INPUT_POST, 'submit'));
             $this->checkAddLinks();
             $this->buildLinkObjs();
             $this->checkMoveLinkObjs();
-            $this->buffer->genHtml($this->getMainText(), $this->getLinkObjs(), $this->getImgText(), $this->getImg1(), $this->getImg2(), $this->getLinkCount());
+            $this->buffer->genHtml(
+                $this->getMainText(),
+                $this->getLinkObjs(),
+                $this->getImgText(),
+                $this->getImg1(),
+                $this->getImg2(),
+                $this->getUploadImg(),
+                $this->getLinkCount()
+            );
         }
         
         private function checkAddLinks() {
@@ -97,6 +107,14 @@
             $linkObjs[$swapKey] = $mover;
             $linkObjs[$key] = $swapper;
             $this->setLinkObjs($linkObjs);
+        }
+ 
+        public function getUploadImg() {
+            return $this->uploadImg;
+        }
+
+        public function setUploadImg($uploadImg) {
+            $this->uploadImg = $uploadImg;
         }
         
         public function getSubmit() {
