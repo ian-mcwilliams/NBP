@@ -150,7 +150,7 @@
         }
 
         public function getLinkCount() {
-            return $this->linkCount;
+            return $this->linkCount ?: 1;
         }
         
         public function incrLinkCount($int=1) {
